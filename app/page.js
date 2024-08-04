@@ -20,13 +20,23 @@ const style = {
     left: '50%',
     transform: 'translate(-50%, -50%)',
     width: 400,
-    bgcolor: 'white',
+    bgcolor: '#fff',
     border: '2px solid #000',
     boxShadow: 24,
     p: 4,
     display: 'flex',
     flexDirection: 'column',
     gap: 3,
+}
+
+const searchSortContainerStyle = {
+    bgcolor: '#fff',
+    border: '1px solid #333',
+    padding: 2,
+    display: 'flex',
+    flexDirection: 'column',
+    alignItems: 'center',
+    gap: 2,
 }
 
 export default function Home() {
@@ -120,10 +130,89 @@ export default function Home() {
             height="100vh"
             display={'flex'}
             justifyContent={'center'}
-            flexDirection={'column'}
             alignItems={'center'}
+            flexDirection={'row'}
             gap={2}
         >
+            <Box
+                width="20vw"
+                sx={searchSortContainerStyle}
+                height="82vh"
+            >
+                <TextField
+                    id="search-bar"
+                    label="Search"
+                    variant="outlined"
+                    fullWidth
+                    value={searchQuery}
+                    onChange={(e) => setSearchQuery(e.target.value)}
+                    sx={{ marginBottom: 2 }}
+                />
+                <Stack direction="column" spacing={2}>
+                    <Button variant="contained" onClick={handleOpen}>
+                        Add New Item
+                    </Button>
+                    <Button variant="contained" onClick={() => setSortType('A-Z')}>
+                        Sort A-Z
+                    </Button>
+                    <Button variant="contained" onClick={() => setSortType('Z-A')}>
+                        Sort Z-A
+                    </Button>
+                    <Button variant="contained" onClick={() => setQuantitySort('least-to-most')}>
+                        Least to Most
+                    </Button>
+                    <Button variant="contained" onClick={() => setQuantitySort('most-to-least')}>
+                        Most to Least
+                    </Button>
+                </Stack>
+            </Box>
+            <Box border={'1px solid #333'} width="70vw">
+                <Box
+                    width="100%"
+                    height="100px"
+                    bgcolor={'#ADD8E6'}
+                    display={'flex'}
+                    justifyContent={'center'}
+                    alignItems={'center'}
+                    marginBottom={2}
+                >
+                    <Typography variant={'h2'} color={'#333'} textAlign={'center'}>
+                        Inventory Items
+                    </Typography>
+                </Box>
+                <Stack width="100%" height="500px" spacing={2} overflow={'auto'}>
+                    {inventory.map(({ name, quantity }) => (
+                        <Box
+                            key={name}
+                            width="80%"
+                            minHeight="100px"
+                            display={'flex'}
+                            justifyContent={'space-between'}
+                            alignSelf={'center'}
+                            alignItems={'center'}
+                            bgcolor={'#4D7CFF'}
+                            paddingX={5}
+                            height="80%"
+                            mx="auto"
+                        >
+                            <Typography variant={'h3'} color={'#333'} textAlign={'center'}>
+                                {name.charAt(0).toUpperCase() + name.slice(1)}
+                            </Typography>
+                            <Typography variant={'h3'} color={'#333'} textAlign={'center'}>
+                                Quantity: {quantity}
+                            </Typography>
+                            <Stack direction="row" spacing={2}>
+                                <Button variant="contained" onClick={() => decreaseItem(name)}>
+                                    Decrease
+                                </Button>
+                                <Button variant="contained" onClick={() => increaseItem(name)}>
+                                    Increase
+                                </Button>
+                            </Stack>
+                        </Box>
+                    ))}
+                </Stack>
+            </Box>
             <Modal
                 open={open}
                 onClose={handleClose}
@@ -156,77 +245,6 @@ export default function Home() {
                     </Stack>
                 </Box>
             </Modal>
-            <Stack direction="column" spacing={2} alignItems="center">
-                <TextField
-                    id="search-bar"
-                    label="Search"
-                    variant="outlined"
-                    fullWidth
-                    value={searchQuery}
-                    onChange={(e) => setSearchQuery(e.target.value)}
-                    sx={{ marginBottom: 2 }}
-                />
-                <Stack direction="row" spacing={2}>
-                    <Button variant="contained" onClick={handleOpen}>
-                        Add New Item
-                    </Button>
-                    <Button variant="contained" onClick={() => setSortType('A-Z')}>
-                        Sort A-Z
-                    </Button>
-                    <Button variant="contained" onClick={() => setSortType('Z-A')}>
-                        Sort Z-A
-                    </Button>
-                    <Button variant="contained" onClick={() => setQuantitySort('least-to-most')}>
-                        Least to Most
-                    </Button>
-                    <Button variant="contained" onClick={() => setQuantitySort('most-to-least')}>
-                        Most to Least
-                    </Button>
-                </Stack>
-            </Stack>
-            <Box border={'1px solid #333'}>
-                <Box
-                    width="800px"
-                    height="100px"
-                    bgcolor={'#ADD8E6'}
-                    display={'flex'}
-                    justifyContent={'center'}
-                    alignItems={'center'}
-                >
-                    <Typography variant={'h2'} color={'#333'} textAlign={'center'}>
-                        Inventory Items
-                    </Typography>
-                </Box>
-                <Stack width="800px" height="300px" spacing={2} overflow={'auto'}>
-                    {inventory.map(({ name, quantity }) => (
-                        <Box
-                            key={name}
-                            width="100%"
-                            minHeight="150px"
-                            display={'flex'}
-                            justifyContent={'space-between'}
-                            alignItems={'center'}
-                            bgcolor={'#f0f0f0'}
-                            paddingX={5}
-                        >
-                            <Typography variant={'h3'} color={'#333'} textAlign={'center'}>
-                                {name.charAt(0).toUpperCase() + name.slice(1)}
-                            </Typography>
-                            <Typography variant={'h3'} color={'#333'} textAlign={'center'}>
-                                Quantity: {quantity}
-                            </Typography>
-                            <Stack direction="row" spacing={2}>
-                                <Button variant="contained" onClick={() => decreaseItem(name)}>
-                                    Decrease
-                                </Button>
-                                <Button variant="contained" onClick={() => increaseItem(name)}>
-                                    Increase
-                                </Button>
-                            </Stack>
-                        </Box>
-                    ))}
-                </Stack>
-            </Box>
         </Box>
     );
 }
