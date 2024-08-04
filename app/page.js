@@ -133,11 +133,6 @@ export default function Home() {
             alignItems={'center'}
             flexDirection={'row'}
             gap={2}
-            sx={{
-                backgroundImage: 'url(/app/tile_background.png)', // Replace with your image path
-                backgroundSize: 'cover', // Ensure the image covers the entire screen
-                backgroundPosition: 'center', // Center the image
-            }}
         >
             <Box
                 width="20vw"
@@ -213,14 +208,25 @@ export default function Home() {
                             <Typography variant={'h3'} color={'#fff'} textAlign={'center'} fontSize={30}>
                                 {name.charAt(0).toUpperCase() + name.slice(1)}
                             </Typography>
-                            <Typography variant={'h3'} color={'#fff'} textAlign={'center'} fontSize={30}>
-                                Quantity: {quantity}
-                            </Typography>
+                            <Box
+                                display="flex"
+                                justifyContent="center"
+                                alignItems="center"
+                                bgcolor="#4D7CFF"
+                                color="#fff"
+                                padding="8px 16px"
+                                borderRadius={10}
+                                border="1px solid #fff"
+                            >
+                                <Typography variant={'h3'} color={'#fff'} textAlign={'center'} fontSize={20}>
+                                    Quantity: {quantity}
+                                </Typography>
+                            </Box>
                             <Stack direction="row" spacing={2}>
-                                <Button variant="contained" onClick={() => decreaseItem(name)}>
+                                <Button variant="contained" onClick={() => decreaseItem(name)} sx={{backgroundColor: '#4D7CFF', '&:hover': {backgroundColor: '#4D7CAF',}}}>
                                     Decrease
                                 </Button>
-                                <Button variant="contained" onClick={() => increaseItem(name)}>
+                                <Button variant="contained" onClick={() => increaseItem(name)} sx={{backgroundColor: '#4D7CFF', '&:hover': {backgroundColor: '#4D7CAF',}}}>
                                     Increase
                                 </Button>
                             </Stack>
