@@ -33,6 +33,7 @@ export default function Home() {
     const [inventory,setInventory] = useState([])
     const [open, setOpen] = useState(false)
     const [itemName, setItemName] = useState('')
+    const [sortType, setSortType] = useState('A-Z')
 
     const updateInventory = async () => {
         const snapshot = query(collection(firestore, 'inventory'))
@@ -41,12 +42,12 @@ export default function Home() {
         docs.forEach((doc) => {
             inventoryList.push({ name: doc.id, ...doc.data() })
         })
-        setInventory(inventoryList)
+        setInventory(sortInventory(inventoryList, sortType))
     }
 
     useEffect(() => {
         updateInventory()
-    }, [])
+    }, [sortType])
 
     const addItem = async (item) => {
         const docRef = doc(collection(firestore, 'inventory'), item)
@@ -72,6 +73,19 @@ export default function Home() {
             }
         }
         await updateInventory()
+    }
+
+    const sortInventory = (inventoryList, type) => {
+        switch (type) {
+            case 'A-Z':
+                return inventoryList.sort((a, b) => a.name.localeCompare(b.name))
+            case 'Z-A':
+                return inventoryList.sort((a, b) => b.name.localeCompare(a.name))
+            case 'quantity':
+                return inventoryList.sort((a, b) => b.quantity - a.quantity)
+            default:
+                return inventoryList
+        }
     }
 
     const handleOpen = () => setOpen(true)
@@ -119,9 +133,20 @@ export default function Home() {
                     </Stack>
                 </Box>
             </Modal>
-            <Button variant="contained" onClick={handleOpen}>
-                Add New Item
-            </Button>
+            <Stack direction="row" spacing={2}>
+                <Button variant="contained" onClick={handleOpen}>
+                    Add New Item
+                </Button>
+                <Button variant="contained" onClick={() => setSortType('A-Z')}>
+                    Sort A-Z
+                </Button>
+                <Button variant="contained" onClick={() => setSortType('Z-A')}>
+                    Sort Z-A
+                </Button>
+                <Button variant="contained" onClick={() => setSortType('quantity')}>
+                    Sort by Quantity
+                </Button>
+            </Stack>
             <Box border={'1px solid #333'}>
                 <Box
                     width="800px"
