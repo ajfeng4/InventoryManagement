@@ -137,7 +137,8 @@ export default function Home() {
             <Box
                 width="20vw"
                 sx={searchSortContainerStyle}
-                height="82vh"
+                height="84vh"
+                borderRadius={10}
             >
                 <TextField
                     id="search-bar"
@@ -146,45 +147,52 @@ export default function Home() {
                     fullWidth
                     value={searchQuery}
                     onChange={(e) => setSearchQuery(e.target.value)}
-                    sx={{ marginBottom: 2 }}
+                    sx={{
+                        marginTop: 2,
+                        marginBottom: 2,
+                        '& .MuiOutlinedInput-root': {
+                            borderRadius: '10px'
+                        },
+                    }}
                 />
-                <Stack direction="column" spacing={2}>
-                    <Button variant="contained" onClick={handleOpen}>
+                <Stack direction="column" spacing={2} borderRadius={10} width={'90%'} >
+                    <Button variant="contained" onClick={handleOpen} sx={{backgroundColor: '#4D7CFF', '&:hover': {backgroundColor: '#4D7CAF',}}}>
                         Add New Item
                     </Button>
-                    <Button variant="contained" onClick={() => setSortType('A-Z')}>
+                    <Button variant="contained" onClick={() => setSortType('A-Z')} sx={{backgroundColor: '#4D7CFF', '&:hover': {backgroundColor: '#4D7CAF',}}} >
                         Sort A-Z
                     </Button>
-                    <Button variant="contained" onClick={() => setSortType('Z-A')}>
+                    <Button variant="contained" onClick={() => setSortType('Z-A')} sx={{backgroundColor: '#4D7CFF', '&:hover': {backgroundColor: '#4D7CAF',}}}>
                         Sort Z-A
                     </Button>
-                    <Button variant="contained" onClick={() => setQuantitySort('least-to-most')}>
+                    <Button variant="contained" onClick={() => setQuantitySort('least-to-most')} sx={{backgroundColor: '#4D7CFF', '&:hover': {backgroundColor: '#4D7CAF',}}}>
                         Least to Most
                     </Button>
-                    <Button variant="contained" onClick={() => setQuantitySort('most-to-least')}>
+                    <Button variant="contained" onClick={() => setQuantitySort('most-to-least')} sx={{backgroundColor: '#4D7CFF', '&:hover': {backgroundColor: '#4D7CAF',}}}>
                         Most to Least
                     </Button>
                 </Stack>
             </Box>
-            <Box border={'1px solid #333'} width="70vw">
+            <Box border={'1px solid #333'} width="70vw" borderRadius={10} overflow={'hidden'}>
                 <Box
                     width="100%"
                     height="100px"
-                    bgcolor={'#ADD8E6'}
+                    bgcolor={'#4D7CFF'}
                     display={'flex'}
                     justifyContent={'center'}
                     alignItems={'center'}
                     marginBottom={2}
+                    overflow={'hidden'}
                 >
-                    <Typography variant={'h2'} color={'#333'} textAlign={'center'}>
-                        Inventory Items
+                    <Typography variant={'h2'} color={'#fff'} textAlign={'center'} fontWeight={'bold'}>
+                        PANTRY TRACKER
                     </Typography>
                 </Box>
                 <Stack width="100%" height="500px" spacing={2} overflow={'auto'}>
                     {inventory.map(({ name, quantity }) => (
                         <Box
                             key={name}
-                            width="80%"
+                            width="90%"
                             minHeight="100px"
                             display={'flex'}
                             justifyContent={'space-between'}
@@ -192,13 +200,15 @@ export default function Home() {
                             alignItems={'center'}
                             bgcolor={'#4D7CFF'}
                             paddingX={5}
-                            height="80%"
+                            height={100}
                             mx="auto"
+                            borderRadius={10}
+                            overflow={'hidden'}
                         >
-                            <Typography variant={'h3'} color={'#333'} textAlign={'center'}>
+                            <Typography variant={'h3'} color={'#fff'} textAlign={'center'} fontSize={30}>
                                 {name.charAt(0).toUpperCase() + name.slice(1)}
                             </Typography>
-                            <Typography variant={'h3'} color={'#333'} textAlign={'center'}>
+                            <Typography variant={'h3'} color={'#fff'} textAlign={'center'} fontSize={30}>
                                 Quantity: {quantity}
                             </Typography>
                             <Stack direction="row" spacing={2}>
