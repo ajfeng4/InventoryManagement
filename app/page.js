@@ -35,6 +35,7 @@ export default function Home() {
     const [itemName, setItemName] = useState('')
     const [sortType, setSortType] = useState('A-Z')
     const [searchQuery, setSearchQuery] = useState('')
+    const [quantitySort, setQuantitySort] = useState('none')
 
     const updateInventory = async () => {
         const snapshot = query(collection(firestore, 'inventory'))
@@ -46,12 +47,12 @@ export default function Home() {
         const filteredInventory = inventoryList.filter(item =>
             item.name.toLowerCase().includes(searchQuery.toLowerCase())
         )
-        setInventory(sortInventory(filteredInventory, sortType))
+        setInventory(sortInventory(filteredInventory, sortType, quantitySort))
     }
 
     useEffect(() => {
         updateInventory()
-    }, [sortType, searchQuery])
+    }, [sortType, searchQuery, quantitySort])
 
     const addItem = async (item) => {
         const docRef = doc(collection(firestore, 'inventory'), item)
@@ -89,17 +90,25 @@ export default function Home() {
         await updateInventory()
     }
 
-    const sortInventory = (inventoryList, type) => {
+    const sortInventory = (inventoryList, type, quantitySort) => {
+        let sortedList = [...inventoryList]
         switch (type) {
             case 'A-Z':
-                return inventoryList.sort((a, b) => a.name.localeCompare(b.name))
+                sortedList = sortedList.sort((a, b) => a.name.localeCompare(b.name))
+                break;
             case 'Z-A':
-                return inventoryList.sort((a, b) => b.name.localeCompare(a.name))
-            case 'quantity':
-                return inventoryList.sort((a, b) => b.quantity - a.quantity)
-            default:
-                return inventoryList
+                sortedList = sortedList.sort((a, b) => b.name.localeCompare(a.name))
+                break;
         }
+        switch (quantitySort) {
+            case 'least-to-most':
+                sortedList = sortedList.sort((a, b) => a.quantity - b.quantity)
+                break;
+            case 'most-to-least':
+                sortedList = sortedList.sort((a, b) => b.quantity - a.quantity)
+                break;
+        }
+        return sortedList
     }
 
     const handleOpen = () => setOpen(true)
@@ -167,8 +176,11 @@ export default function Home() {
                     <Button variant="contained" onClick={() => setSortType('Z-A')}>
                         Sort Z-A
                     </Button>
-                    <Button variant="contained" onClick={() => setSortType('quantity')}>
-                        Sort by Quantity
+                    <Button variant="contained" onClick={() => setQuantitySort('least-to-most')}>
+                        Least to Most
+                    </Button>
+                    <Button variant="contained" onClick={() => setQuantitySort('most-to-least')}>
+                        Most to Least
                     </Button>
                 </Stack>
             </Stack>
