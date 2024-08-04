@@ -13,7 +13,6 @@ import {
     getDoc,
 } from 'firebase/firestore'
 
-
 const style = {
     position: 'absolute',
     top: '50%',
@@ -43,6 +42,7 @@ export default function Home() {
     const [inventory, setInventory] = useState([])
     const [open, setOpen] = useState(false)
     const [itemName, setItemName] = useState('')
+    const [itemQuantity, setItemQuantity] = useState(1)
     const [sortType, setSortType] = useState('A-Z')
     const [searchQuery, setSearchQuery] = useState('')
     const [quantitySort, setQuantitySort] = useState('none')
@@ -64,14 +64,14 @@ export default function Home() {
         updateInventory()
     }, [sortType, searchQuery, quantitySort])
 
-    const addItem = async (item) => {
+    const addItem = async (item, quantity) => {
         const docRef = doc(collection(firestore, 'inventory'), item)
         const docSnap = await getDoc(docRef)
         if (docSnap.exists()) {
-            const { quantity } = docSnap.data()
-            await setDoc(docRef, { quantity: quantity + 1 })
+            const { quantity: existingQuantity } = docSnap.data()
+            await setDoc(docRef, { quantity: existingQuantity + quantity })
         } else {
-            await setDoc(docRef, { quantity: 1 })
+            await setDoc(docRef, { quantity })
         }
         await updateInventory()
     }
@@ -133,6 +133,11 @@ export default function Home() {
             alignItems={'center'}
             flexDirection={'row'}
             gap={2}
+            sx={{
+                backgroundImage: 'url(/app/tile_background.png)', // Replace with your image path
+                backgroundSize: 'cover', // Ensure the image covers the entire screen
+                backgroundPosition: 'center', // Center the image
+            }}
         >
             <Box
                 width="20vw"
@@ -185,7 +190,7 @@ export default function Home() {
                     overflow={'hidden'}
                 >
                     <Typography variant={'h2'} color={'#fff'} textAlign={'center'} fontWeight={'bold'}>
-                        PANTRY TRACKER
+                        🥕PANTRY TRACKER🥕
                     </Typography>
                 </Box>
                 <Stack width="100%" height="500px" spacing={2} overflow={'auto'}>
@@ -229,11 +234,11 @@ export default function Home() {
                 aria-labelledby="modal-modal-title"
                 aria-describedby="modal-modal-description"
             >
-                <Box sx={style}>
+                <Box sx={{ ...style, borderRadius: 10 }}>
                     <Typography id="modal-modal-title" variant="h6" component="h2">
                         Add Item
                     </Typography>
-                    <Stack width="100%" direction={'row'} spacing={2}>
+                    <Stack width="100%" direction={'column'} spacing={2}>
                         <TextField
                             id="outlined-basic"
                             label="Item"
@@ -241,13 +246,38 @@ export default function Home() {
                             fullWidth
                             value={itemName}
                             onChange={(e) => setItemName(e.target.value)}
+                            sx={{
+                                '& .MuiOutlinedInput-root': {
+                                    borderRadius: '10px'
+                                },
+                            }}
+                        />
+                        <TextField
+                            id="outlined-quantity"
+                            label="Quantity"
+                            variant="outlined"
+                            type="number"
+                            fullWidth
+                            value={itemQuantity}
+                            onChange={(e) => setItemQuantity(e.target.value)}
+                            sx={{
+                                '& .MuiOutlinedInput-root': {
+                                    borderRadius: '10px'
+                                },
+                            }}
                         />
                         <Button
                             variant="outlined"
                             onClick={() => {
-                                addItem(itemName)
+                                addItem(itemName, Number(itemQuantity))
                                 setItemName('')
+                                setItemQuantity(1)
                                 handleClose()
+                            }}
+                            sx={{
+                                backgroundColor: '#4D7CFF',
+                                '&:hover': { backgroundColor: '#4D7CAF' },
+                                color: '#fff'
                             }}
                         >
                             Add
