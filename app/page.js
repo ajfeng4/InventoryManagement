@@ -34,6 +34,7 @@ export default function Home() {
     const [open, setOpen] = useState(false)
     const [itemName, setItemName] = useState('')
     const [sortType, setSortType] = useState('A-Z')
+    const [searchQuery, setSearchQuery] = useState('')
 
     const updateInventory = async () => {
         const snapshot = query(collection(firestore, 'inventory'))
@@ -42,12 +43,15 @@ export default function Home() {
         docs.forEach((doc) => {
             inventoryList.push({ name: doc.id, ...doc.data() })
         })
-        setInventory(sortInventory(inventoryList, sortType))
+        const filteredInventory = inventoryList.filter(item =>
+            item.name.toLowerCase().includes(searchQuery.toLowerCase())
+        )
+        setInventory(sortInventory(filteredInventory, sortType))
     }
 
     useEffect(() => {
         updateInventory()
-    }, [sortType])
+    }, [sortType, searchQuery])
 
     const addItem = async (item) => {
         const docRef = doc(collection(firestore, 'inventory'), item)
@@ -133,19 +137,30 @@ export default function Home() {
                     </Stack>
                 </Box>
             </Modal>
-            <Stack direction="row" spacing={2}>
-                <Button variant="contained" onClick={handleOpen}>
-                    Add New Item
-                </Button>
-                <Button variant="contained" onClick={() => setSortType('A-Z')}>
-                    Sort A-Z
-                </Button>
-                <Button variant="contained" onClick={() => setSortType('Z-A')}>
-                    Sort Z-A
-                </Button>
-                <Button variant="contained" onClick={() => setSortType('quantity')}>
-                    Sort by Quantity
-                </Button>
+            <Stack direction="column" spacing={2} alignItems="center">
+                <TextField
+                    id="search-bar"
+                    label="Search"
+                    variant="outlined"
+                    fullWidth
+                    value={searchQuery}
+                    onChange={(e) => setSearchQuery(e.target.value)}
+                    sx={{ marginBottom: 2 }}
+                />
+                <Stack direction="row" spacing={2}>
+                    <Button variant="contained" onClick={handleOpen}>
+                        Add New Item
+                    </Button>
+                    <Button variant="contained" onClick={() => setSortType('A-Z')}>
+                        Sort A-Z
+                    </Button>
+                    <Button variant="contained" onClick={() => setSortType('Z-A')}>
+                        Sort Z-A
+                    </Button>
+                    <Button variant="contained" onClick={() => setSortType('quantity')}>
+                        Sort by Quantity
+                    </Button>
+                </Stack>
             </Stack>
             <Box border={'1px solid #333'}>
                 <Box
