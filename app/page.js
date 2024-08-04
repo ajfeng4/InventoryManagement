@@ -30,7 +30,7 @@ const style = {
 }
 
 export default function Home() {
-    const [inventory,setInventory] = useState([])
+    const [inventory, setInventory] = useState([])
     const [open, setOpen] = useState(false)
     const [itemName, setItemName] = useState('')
     const [sortType, setSortType] = useState('A-Z')
@@ -65,16 +65,26 @@ export default function Home() {
         await updateInventory()
     }
 
-    const removeItem = async (item) => {
+    const decreaseItem = async (item) => {
         const docRef = doc(collection(firestore, 'inventory'), item)
         const docSnap = await getDoc(docRef)
         if (docSnap.exists()) {
             const { quantity } = docSnap.data()
-            if (quantity === 1) {
-                await deleteDoc(docRef)
-            } else {
+            if (quantity > 1) {
                 await setDoc(docRef, { quantity: quantity - 1 })
+            } else {
+                await deleteDoc(docRef)
             }
+        }
+        await updateInventory()
+    }
+
+    const increaseItem = async (item) => {
+        const docRef = doc(collection(firestore, 'inventory'), item)
+        const docSnap = await getDoc(docRef)
+        if (docSnap.exists()) {
+            const { quantity } = docSnap.data()
+            await setDoc(docRef, { quantity: quantity + 1 })
         }
         await updateInventory()
     }
@@ -176,7 +186,7 @@ export default function Home() {
                     </Typography>
                 </Box>
                 <Stack width="800px" height="300px" spacing={2} overflow={'auto'}>
-                    {inventory.map(({name, quantity}) => (
+                    {inventory.map(({ name, quantity }) => (
                         <Box
                             key={name}
                             width="100%"
@@ -193,13 +203,18 @@ export default function Home() {
                             <Typography variant={'h3'} color={'#333'} textAlign={'center'}>
                                 Quantity: {quantity}
                             </Typography>
-                            <Button variant="contained" onClick={() => removeItem(name)}>
-                                Remove
-                            </Button>
+                            <Stack direction="row" spacing={2}>
+                                <Button variant="contained" onClick={() => decreaseItem(name)}>
+                                    Decrease
+                                </Button>
+                                <Button variant="contained" onClick={() => increaseItem(name)}>
+                                    Increase
+                                </Button>
+                            </Stack>
                         </Box>
                     ))}
                 </Stack>
             </Box>
         </Box>
-  );
+    );
 }
